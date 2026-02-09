@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidang Alat - OMRON JPN 600</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- STYLE DASAR (TETAP SAMA AGAR KONSISTEN) --- */
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #141414;
+            --accent: #00e5ff;
+            --accent-sec: #ff0055;
+            --text-main: #ffffff;
+            --text-dim: #bbbbbb;
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            background-color: var(--bg-color); font-family: 'Quicksand', sans-serif;
+            color: var(--text-main); font-size: 2.2vh; /* Font disesuaikan */
+        }
+
+        .controls {
+            position: fixed; bottom: 2vh; left: 50%; transform: translateX(-50%); z-index: 1000;
+            display: flex; gap: 1vw; background: rgba(0,0,0,0.8); padding: 1vh 2vw;
+            border-radius: 50px; border: 1px solid var(--accent);
+        }
+
+        .btn { background: transparent; border: none; color: var(--accent); font-size: 2vh; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: var(--accent); color: #000; }
+
+        .stage { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; perspective: 1500px; }
+
+        .slide {
+            position: absolute; width: 90%; height: 90%; background: var(--card-bg);
+            border-radius: 25px; padding: 4vh 4vw; box-sizing: border-box;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid var(--border);
+            opacity: 0; display: flex; flex-direction: column; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .slide.active { opacity: 1; transform: translateY(0) scale(1); z-index: 10; border-color: var(--accent); }
+        .slide.prev { opacity: 0; transform: translateY(-100px) scale(0.9); z-index: 5; }
+        .slide.next { opacity: 0; transform: translateY(100px) scale(0.9); z-index: 1; }
+
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0; color: var(--accent); line-height: 1.1; }
+        h2 { font-size: clamp(2rem, 3.5vh, 3rem); color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 1vh; margin: 0 0 2vh 0; }
+        
+        /* List Style yang Lebih Rapi */
+        ul, ol { margin: 0; padding-left: 1.5em; }
+        li { margin-bottom: 1vh; color: #ddd; }
+        strong { color: #fff; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; height: 100%; }
+        
+        .box {
+            background: rgba(255,255,255,0.03); border-radius: 15px; padding: 2.5vh;
+            border: 1px solid rgba(255,255,255,0.1); height: 100%;
+            display: flex; flex-direction: column; justify-content: flex-start; /* Isi dari atas */
+        }
+
+        /* --- DIAGRAM & FOTO --- */
+        .diagram-wrapper { position: relative; width: 100%; height: 100%; background: #000; border-radius: 15px; overflow: hidden; border: 2px dashed #555; }
+        .diagram-img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; transition: transform 0.4s; }
+        
+        /* Hotspot Style */
+        .hotspot { position: absolute; width: 3vh; height: 3vh; background: rgba(255, 0, 85, 0.6); border: 2px solid #fff; border-radius: 50%; cursor: pointer; z-index: 20; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        /* --- TABEL --- */
+        table { width: 100%; border-collapse: collapse; font-size: 2vh; }
+        th { text-align: left; padding: 1vh; border-bottom: 2px solid var(--accent); color: var(--accent); }
+        td { padding: 1vh; border-bottom: 1px solid #333; }
+
+        /* --- DOC GRID --- */
+        .doc-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2vh; height: 100%; }
+        .doc-thumb { background: #222; border-radius: 15px; overflow: hidden; border: 2px solid #444; position: relative; }
+        .doc-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        
+    </style>
+</head>
+<body>
+
+    <div class="stage">
+
+        <div class="slide active">
+            <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <div style="width: 12vh; height: 12vh; margin-bottom: 2vh; border: 2px dashed var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="UADLOGO.png" style="width:100%; height:100%; object-fit:contain;">
+                </div>
+
+                <h3 style="color: var(--accent-sec); letter-spacing: 2px; margin-bottom: 0;">SIDANG ALAT</h3>
+                <h1 style="margin: 1vh 0;">AUTOMATIC BLOOD<br>PRESSURE MONITOR</h1>
+                <p style="font-size: 2.5vh; margin-bottom: 4vh;">OMRON JPN 600</p>
+
+                <div style="border-bottom: 1px solid #444; padding-bottom: 2vh; margin-bottom: 2vh; width: 60%;">
+                    <strong style="font-size: 3vh; color: var(--accent);">MAULANA ALFI ZAMRIZA</strong><br>
+                    <span style="color: #aaa;">NIM. 2040124024</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; width: 80%;">
+                    <div><small style="color:#888;">Penguji 1</small><br><strong>Indra Jaya, S.T., M.T.</strong></div>
+                    <div><small style="color:#888;">Penguji 2</small><br><strong>Joni Afriadi, S.ST., M.K.M</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="grid-2">
+                <div class="box">
+                    <h2>A. Definisi Alat</h2>
+                    <ul>
+                        <li><strong>Jenis:</strong> Sphygmomanometer Digital (Non-Invasif).</li>
+                        <li><strong>Metode:</strong> Osilometrik (Deteksi getaran arteri).</li>
+                        <li><strong>Fitur Kunci:</strong> <em>IntelliSense Technology</em> (Inflasi otomatis sesuai kondisi pasien).</li>
+                        <li><strong>Penggunaan:</strong> Lengan Atas (Upper Arm).</li>
+                    </ul>
+                </div>
+                <div class="box" style="border-color: var(--accent-sec);">
+                    <h2 style="color: var(--accent-sec); border-color: var(--accent-sec);">B. Tujuan</h2>
+                    <ul>
+                        <li><strong>Monitoring:</strong> Pantau status hemodinamik (Tensi & Nadi).</li>
+                        <li><strong>Skrining:</strong> Deteksi dini Hipertensi / Hipotensi.</li>
+                        <li><strong>Evaluasi:</strong> Menilai efektivitas terapi obat.</li>
+                        <li><strong>Edukasi:</strong> Alat mandiri untuk <em>Home Care</em>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="grid-2">
+                <div class="box">
+                    <h2>C. Fungsi Utama</h2>
+                    <ul>
+                        <li>⚡ <strong>Ukur Tekanan Darah:</strong> Sistolik & Diastolik (0-299 mmHg).</li>
+                        <li>❤️ <strong>Ukur Denyut Nadi:</strong> 40-180 bpm.</li>
+                        <li>🧠 <strong>Indikator Cerdas:</strong>
+                            <ul>
+                                <li>Deteksi Gerak Tubuh.</li>
+                                <li>Deteksi Irama Jantung Tak Teratur.</li>
+                                <li>Panduan Pemakaian Manset (OK/Tidak).</li>
+                            </ul>
+                        </li>
+                        <li>💾 <strong>Memori:</strong> Simpan 90 data terakhir + Waktu.</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h2>D. Penempatan</h2>
+                    <ul>
+                        <li><strong>Lokasi:</strong> Ruang Rawat Inap, Poliklinik, IGD (Triage), Apotek, Rumah Pasien.</li>
+                        <li><strong>Kondisi Operasional:</strong>
+                            <ul>
+                                <li>Suhu: 10°C s.d 40°C.</li>
+                                <li>Kelembaban: 30% s.d 85%.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Penyimpanan:</strong> Tempat kering, hindari sinar matahari langsung.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>E. Spesifikasi Teknis</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2vh; height: 100%;">
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">MODEL</small><br><strong>JPN 600</strong>
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">DISPLAY</small><br><strong>LCD Digital</strong>
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">METODE</small><br><strong>Osilometrik</strong>
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">RANGE TEKANAN</small><br><strong>0 - 299 mmHg</strong>
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">RANGE NADI</small><br><strong>40 - 180 bpm</strong>
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">AKURASI</small><br><strong>Tekanan: ±3 mmHg<br>Nadi: ±5%</strong>
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">POWER</small><br><strong>4x AA (6V DC)<br>Adaptor (Opsional)</strong>
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">BERAT</small><br><strong>± 280 gram</strong> (Main Unit)
+                </div>
+                <div style="background:#222; padding:1.5vh; border-radius:10px; border-left:3px solid var(--accent);">
+                    <small style="color:#888;">DIMENSI</small><br><strong>107 x 79 x 141 mm</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1vh;">
+                <h2>F. Blok Diagram Sistem</h2>
+                <small style="color: var(--accent);">*Klik gambar untuk Zoom</small>
+            </div>
+            
+            <div class="grid-2" style="grid-template-columns: 2.5fr 1fr;">
+                <div class="diagram-wrapper" id="diagramArea" onclick="toggleZoom(event)">
+                    <div style="width:100%; height:100%;" id="imgContainer">
+                        <img src="BLOK Diagram System.png" class="diagram-img" id="zoomImg" alt="Diagram Blok">
+                        
+                        <div class="hotspot" style="top: 40%; left: 45%;" onmouseover="showTip('MCU', 'Microcontroller: Otak sistem, mengolah data ADC sensor & kontrol pompa.')"></div>
+                        <div class="hotspot" style="top: 60%; left: 45%;" onmouseover="showTip('Sensor Tekanan', 'Transducer: Ubah tekanan udara jadi sinyal listrik analog.')"></div>
+                        <div class="hotspot" style="top: 50%; left: 70%;" onmouseover="showTip('Motor Pump', 'Aktuator: Memompa udara masuk manset (Inflasi).')"></div>
+                        <div class="hotspot" style="top: 50%; left: 80%;" onmouseover="showTip('Valve', 'Solenoid: Membuang udara (Deflasi/Exhaust).')"></div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3 id="tipTitle" style="color: var(--accent);">Info Diagram</h3>
+                    <p id="tipDesc" style="margin-top: 2vh; color: #aaa;">Arahkan kursor ke titik merah di gambar untuk melihat fungsi komponen.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>G. Prinsip Kerja (Alur)</h2>
+            <div style="display: flex; flex-direction: column; gap: 1.5vh; justify-content: center; height: 100%;">
+                <div style="background:#222; padding:2vh; border-radius:10px; border-left: 5px solid #fff;">
+                    <strong>1. START & INFLASI</strong><br>
+                    Tombol ditekan ➔ Inisialisasi ➔ Pompa ON ➔ <em>IntelliSense</em> prediksi target tekanan ➔ Manset mengembang.
+                </div>
+                <div style="background:#222; padding:2vh; border-radius:10px; border-left: 5px solid var(--accent);">
+                    <strong>2. DEFLASI & SENSING (OSILASI)</strong><br>
+                    Pompa OFF ➔ Katup buang perlahan ➔ Darah mengalir lagi ➔ Sensor deteksi getaran (osilasi) dinding arteri.
+                </div>
+                <div style="background:#222; padding:2vh; border-radius:10px; border-left: 5px solid #fff;">
+                    <strong>3. KALKULASI DATA</strong><br>
+                    MCU analisis amplitudo gelombang:<br>
+                    • Amplitudo Naik Tajam = <strong>Sistolik</strong>.<br>
+                    • Puncak lalu Turun = <strong>Diastolik</strong>.
+                </div>
+                <div style="background:#222; padding:2vh; border-radius:10px; border-left: 5px solid var(--accent);">
+                    <strong>4. DISPLAY & EXHAUST</strong><br>
+                    Hasil tampil di LCD ➔ Katup buka penuh (buang sisa udara) ➔ Selesai.
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="grid-2">
+                <div class="box">
+                    <h2>H. SOP Penggunaan</h2>
+                    <ol>
+                        <li>Pasien duduk tegak, rileks, kaki tidak menyilang.</li>
+                        <li>Pasang manset pada lengan atas (1-2 cm di atas siku).</li>
+                        <li>Pastikan selang sejajar arteri/jari tengah.</li>
+                        <li>Tekan tombol <strong>START</strong>.</li>
+                        <li>Diam, jangan bicara/bergerak selama proses.</li>
+                        <li>Tunggu manset kempis total, catat hasil.</li>
+                    </ol>
+                </div>
+                <div class="box" style="border-color: #ff9900;">
+                    <h2 style="color:#ff9900; border-color:#ff9900;">I. Pemeliharaan</h2>
+                    <ul>
+                        <li><strong>Unit Utama:</strong> Bersihkan dengan kain kering lembut. Jangan gunakan alkohol/bensin.</li>
+                        <li><strong>Manset:</strong> Usap kain lembab, <em>JANGAN</em> dicuci atau direndam air.</li>
+                        <li><strong>Penyimpanan:</strong> Lepas baterai jika tidak dipakai >3 bulan.</li>
+                        <li><strong>Kalibrasi:</strong> Lakukan uji akurasi minimal 2 tahun sekali.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="grid-2">
+                <div class="box">
+                    <h2>J. Penerapan K3</h2>
+                    <div style="margin-bottom: 2vh;">
+                        <strong style="color:var(--accent-sec);">⚠️ Bahaya Tekanan</strong><br>
+                        Segera lepas manset/tekan STOP jika tidak kempis otomatis atau lengan sakit.
+                    </div>
+                    <div style="margin-bottom: 2vh;">
+                        <strong style="color:#FFFF00;">⚡ Bahaya Listrik</strong><br>
+                        Tangan harus kering saat colok/cabut adaptor.
+                    </div>
+                    <div>
+                        <strong style="color:#00FF00;">☢️ Limbah B3</strong><br>
+                        Buang baterai bekas sesuai prosedur limbah B3 RS.
+                    </div>
+                </div>
+                
+                <div class="box">
+                    <h2>L. Troubleshooting</h2>
+                    <table>
+                        <tr><th>Kode</th><th>Masalah</th><th>Solusi</th></tr>
+                        <tr><td><strong>E1</strong></td><td>Selang Lepas/Bocor</td><td>Pasang ulang selang</td></tr>
+                        <tr><td><strong>E2</strong></td><td>Gerakan Tubuh</td><td>Ulangi, diam & rileks</td></tr>
+                        <tr><td><strong>E3</strong></td><td>Inflasi Gagal</td><td>Cek lilitan manset</td></tr>
+                        <tr><td><strong>E4</strong></td><td>Gangguan Saat Ukur</td><td>Bicara/Gerak saat ukur</td></tr>
+                        <tr><td><strong>E5</strong></td><td>Error Sistem</td><td>Reset (Cabut Baterai)</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>K. Dokumentasi Alat</h2>
+            <div class="doc-gallery">
+                <div class="doc-thumb">
+                    <img src="Tampak Depan.jpg" alt="Tampak Depan">
+                </div>
+                <div class="doc-thumb">
+                    <img src="Sistem View.jpg" alt="Sistem View">
+                </div>
+                <div class="doc-thumb">
+                    <img src="Bagian bawah main board.jpg" alt="Lainnya1">
+                </div>
+                <div class="doc-thumb">
+                    <img src="Socket Air (NIBP).jpg" alt="Lainnya2">
+                </div>
+                <div class="doc-thumb">
+                    <img src="Socket Adaptor 6V.jpg" alt="Lainnya3">
+                </div>
+                <div class="doc-thumb">
+                    <img src="Manset View.jpg" alt="Keterangan Foto">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <h1 style="color: var(--accent);">TERIMA KASIH</h1>
+                <h3 style="margin-top: 2vh;">Sesi Tanya Jawab</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="prevSlide()">❮ Back</button>
+        <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        <button class="btn" onclick="nextSlide()">Next ❯</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev', 'next');
+                if (index === currentSlide) slide.classList.add('active');
+                else if (index < currentSlide) slide.classList.add('prev');
+                else slide.classList.add('next');
+            });
+        }
+
+        function nextSlide() { if(currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } }
+        function prevSlide() { if(currentSlide > 0) { currentSlide--; updateSlides(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else if (document.exitFullscreen) document.exitFullscreen();
+        }
+
+        let isZoomed = false;
+        function toggleZoom(e) {
+            const img = document.getElementById('zoomImg');
+            const container = document.getElementById('diagramArea');
+            if (!isZoomed) {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                img.style.transformOrigin = `${x}px ${y}px`;
+                img.style.transform = "scale(2.5)";
+                container.style.cursor = "zoom-out";
+                isZoomed = true;
+            } else {
+                img.style.transform = "scale(1)";
+                container.style.cursor = "zoom-in";
+                isZoomed = false;
+            }
+        }
+
+        function showTip(title, desc) {
+            document.getElementById('tipTitle').innerText = title;
+            document.getElementById('tipDesc').innerText = desc;
+        }
+
+        updateSlides();
+    </script>
+</body>
+</html>
